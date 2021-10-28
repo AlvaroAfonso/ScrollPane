@@ -28,21 +28,38 @@ public class Lienzo extends JPanel{
     private BufferedImage actImg = null;
     private BufferedImage umbralImg = null;
     private Color pixels[][];
+    private int chosen = 0;
     
     public Lienzo(){
-        this.setPreferredSize(new Dimension(1000, 744));
+        this.setPreferredSize(new Dimension(950, 694));
     }
     
    @Override
     public void paintComponent(Graphics g){
         if(actImg == null) return;
         super.paintComponent(g);
-        if(umbralImg != null){
+        if(chosen == 1){
             g.drawImage(umbralImg, 0, 0, null);
         }else{
             g.drawImage(actImg, 0, 0, null);
-        }
-        
+        } 
+    }
+    
+    public void setChosen(int chosen){
+        this.chosen = chosen;
+        this.repaint();
+    }
+    
+    public BufferedImage getActImg(){
+        return actImg;
+    }
+    
+    public BufferedImage getUmbImg(){
+        return umbralImg;
+    }
+    
+    public int getChosen(){
+        return chosen;
     }
     
     public void loadImg(File img, int option){
@@ -51,10 +68,11 @@ public class Lienzo extends JPanel{
             if(option == 0){
                 actImg = this.resizeImg(actImg, 950, 694);
             }
+            umbralImg = null;
         }catch(Exception ex){
             
         }
-        
+        chosen = 0;
         this.repaint();
     }
     
@@ -113,6 +131,7 @@ public class Lienzo extends JPanel{
                 umbralImg.setRGB(j, i, pixels[i][j].getRGB());
             }
         } 
+        chosen = 1;
         this.repaint();
     }
    
