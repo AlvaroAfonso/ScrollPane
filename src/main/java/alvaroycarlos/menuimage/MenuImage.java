@@ -175,7 +175,6 @@ public class MenuImage extends javax.swing.JFrame {
       
         if(res == JFileChooser.APPROVE_OPTION){
             File file = fc.getSelectedFile();
-            lienzo1.getUmbImg();
             String path = file.getAbsolutePath();
             //System.out.println(file.getName());
             //System.out.println(path);
