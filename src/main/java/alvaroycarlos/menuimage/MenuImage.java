@@ -10,6 +10,8 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.regex.*;
+import javax.imageio.ImageIO;
 //import org.opencv.core.Core;
 
 /**
@@ -26,6 +28,8 @@ public class MenuImage extends javax.swing.JFrame {
         //nu.pattern.OpenCV.loadShared();
         //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         initComponents();
+        this.setResizable(false);
+        this.setLocationRelativeTo(null);
         filter = new FileNameExtensionFilter("Imágenes","*.jpg","*.png","*.jpeg","jpg","png","jpeg");
         fc.addChoosableFileFilter(filter);
     }
@@ -50,20 +54,22 @@ public class MenuImage extends javax.swing.JFrame {
         salir = new javax.swing.JMenuItem();
         editar = new javax.swing.JMenu();
         umbralizar = new javax.swing.JMenuItem();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        ayuda = new javax.swing.JMenu();
+        informacion = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lienzo1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         javax.swing.GroupLayout lienzo1Layout = new javax.swing.GroupLayout(lienzo1);
         lienzo1.setLayout(lienzo1Layout);
         lienzo1Layout.setHorizontalGroup(
             lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1024, Short.MAX_VALUE)
+            .addGap(0, 1020, Short.MAX_VALUE)
         );
         lienzo1Layout.setVerticalGroup(
             lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 768, Short.MAX_VALUE)
+            .addGap(0, 764, Short.MAX_VALUE)
         );
 
         files.setText("Imágenes");
@@ -76,7 +82,7 @@ public class MenuImage extends javax.swing.JFrame {
         });
         files.add(abrir);
 
-        guardar.setText("Guardar");
+        guardar.setText("Guardar umbralizada");
         guardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 guardarActionPerformed(evt);
@@ -87,12 +93,22 @@ public class MenuImage extends javax.swing.JFrame {
         vista.setText("Vista");
 
         vistaOriginal.setText("Imagen original");
+        vistaOriginal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                vistaOriginalActionPerformed(evt);
+            }
+        });
         vista.add(vistaOriginal);
 
         files.add(vista);
         files.add(jSeparator1);
 
         salir.setText("Salir");
+        salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirActionPerformed(evt);
+            }
+        });
         files.add(salir);
 
         jMenuBar1.add(files);
@@ -109,12 +125,17 @@ public class MenuImage extends javax.swing.JFrame {
 
         jMenuBar1.add(editar);
 
-        jMenu1.setText("Ayuda");
+        ayuda.setText("Ayuda");
 
-        jMenuItem3.setText("Información de uso");
-        jMenu1.add(jMenuItem3);
+        informacion.setText("Información de uso");
+        informacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informacionActionPerformed(evt);
+            }
+        });
+        ayuda.add(informacion);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(ayuda);
 
         setJMenuBar(jMenuBar1);
 
@@ -131,19 +152,45 @@ public class MenuImage extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lienzo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lienzo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void guardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarActionPerformed
+        
+        if(lienzo1.getActImg() == null){
+            JOptionPane.showConfirmDialog(this, "Primero debe cargar una imagen","Error",JOptionPane.CLOSED_OPTION);
+            return;
+        }
+        
+        if(lienzo1.getUmbImg() == null){
+            JOptionPane.showConfirmDialog(this, "Primero debe umbralizar una imagen","Error",JOptionPane.CLOSED_OPTION);
+            return;
+        }
+        
         int res = fc.showSaveDialog(null);
       
         if(res == JFileChooser.APPROVE_OPTION){
             File file = fc.getSelectedFile();
-            System.out.println(file.getAbsolutePath());
+            lienzo1.getUmbImg();
+            String path = file.getAbsolutePath();
+            //System.out.println(file.getName());
+            //System.out.println(path);
+            String extension = "";
+            String regex = "(^[a-zA-Z0-9._ -]+)\\.(jpeg|jpg|png)$"; 
+            Pattern r = Pattern.compile(regex);
+            Matcher m = r.matcher(file.getName());
+            System.out.println(m.matches());
+            System.out.println("Grupo "+ m.group(2));
+            System.out.println("Nombre "+ file.getName());
+            try{
+                ImageIO.write(lienzo1.getUmbImg(), m.group(2), new File(path));
+            }catch(Exception ex){
+                System.out.println(ex.getMessage());
+            }
         }
     }//GEN-LAST:event_guardarActionPerformed
 
@@ -167,10 +214,49 @@ public class MenuImage extends javax.swing.JFrame {
     }//GEN-LAST:event_abrirActionPerformed
 
     private void umbralizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_umbralizarActionPerformed
-        int res = Integer.parseInt(JOptionPane.showInputDialog(this, "Introduce un umbral", "Umbral", JOptionPane.OK_CANCEL_OPTION));
+        
+        if(lienzo1.getActImg() == null){
+            JOptionPane.showConfirmDialog(this, "Primero debe cargar una imagen","Error",JOptionPane.CLOSED_OPTION);
+            return;
+        }
+        String input = JOptionPane.showInputDialog(this, "Introduce un umbral", "Umbral", JOptionPane.OK_CANCEL_OPTION);
+        int res;
+        try{
+            res = Integer.parseInt(input);
+        }catch(Exception ex){
+            System.out.println("Fallito");
+            return;
+        }
+        
         System.out.println("Umbralizando");
         lienzo1.umbralizar(res);
     }//GEN-LAST:event_umbralizarActionPerformed
+
+    private void vistaOriginalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vistaOriginalActionPerformed
+        if(lienzo1.getActImg() == null){
+            JOptionPane.showConfirmDialog(this, "Debe cargar una imagen","Error",JOptionPane.CLOSED_OPTION);
+        }
+        if(lienzo1.getUmbImg() == null){
+            //JOptionPane.showConfirmDialog(this, "Primero debe umbralizar una imagen","Error",JOptionPane.CLOSED_OPTION);
+            return;
+        }
+        lienzo1.setChosen(0);
+    }//GEN-LAST:event_vistaOriginalActionPerformed
+
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+        int res = JOptionPane.showConfirmDialog(this, "¿Desea cerrar la ventena?", 
+                "Finalizar programa", JOptionPane.YES_NO_OPTION);
+        
+        if (res == JOptionPane.YES_OPTION){
+            this.dispose();
+        }
+    }//GEN-LAST:event_salirActionPerformed
+
+    private void informacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionActionPerformed
+        JOptionPane.showMessageDialog(this, 
+                "El uso de esta aplicación consiste en cargar una imagen selecionada para poder aplicarle filtros de umbralizacion,"+
+                        "\ncuyo resultado también podrá ser guardado en disco con el nombre elegido.", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_informacionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -209,12 +295,12 @@ public class MenuImage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem abrir;
+    private javax.swing.JMenu ayuda;
     private javax.swing.JMenu editar;
     private javax.swing.JMenu files;
     private javax.swing.JMenuItem guardar;
-    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem informacion;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private alvaroycarlos.menuimage.Lienzo lienzo1;
     private javax.swing.JMenuItem salir;
