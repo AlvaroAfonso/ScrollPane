@@ -93,15 +93,6 @@ public class Lienzo extends JPanel{
         BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
         outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
         return outputImage;
-        /*int ancho = original.getWidth();
-        int alto = original.getHeight();
-        int escalaAncho = (int)(porcentaje* ancho);
-        int escalaAlto = (int)(porcentaje*alto);
-        BufferedImage bufim = new BufferedImage(escalaAncho, escalaAlto, bf.getType());
-        Graphics2D g = bufim.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(bf, 0,0, escalaAncho,escalaAlto, 0,0,ancho,alto, null);
-        g.dispose();*/
     }
     
     public void umbralizar(int umbral){
