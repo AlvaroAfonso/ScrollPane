@@ -178,15 +178,16 @@ public class MenuImage extends javax.swing.JFrame {
             String path = file.getAbsolutePath();
             //System.out.println(file.getName());
             //System.out.println(path);
-            String extension = "";
             String regex = "(^[a-zA-Z0-9._ -]+)\\.(jpeg|jpg|png)$"; 
             Pattern r = Pattern.compile(regex);
             Matcher m = r.matcher(file.getName());
-            System.out.println(m.matches());
-            System.out.println("Grupo "+ m.group(2));
-            System.out.println("Nombre "+ file.getName());
             try{
-                ImageIO.write(lienzo1.getUmbImg(), m.group(2), new File(path));
+                if(m.matches()){
+                    ImageIO.write(lienzo1.getUmbImg(), m.group(2), new File(path));
+                }else{
+                    JOptionPane.showConfirmDialog(this, "Debe guardar con alguno de estos formatos: png, jpg o jpeg","Error",JOptionPane.CLOSED_OPTION);
+
+                }
             }catch(Exception ex){
                 System.out.println(ex.getMessage());
             }
@@ -200,7 +201,7 @@ public class MenuImage extends javax.swing.JFrame {
             File file = fc.getSelectedFile();
             System.out.println(file.getAbsolutePath());
             if(!lienzo1.correctSize(file)){
-                int rp = JOptionPane.showConfirmDialog(this, "La imagen debe ser inferior a 1024x768, desea redimensionar", "Redimensionar imagen", JOptionPane.YES_NO_OPTION);
+                int rp = JOptionPane.showConfirmDialog(this, "Hemos definido que la imagen debe ser como máximo de 950x694, ¿desea redimensionar?", "Redimensionar imagen", JOptionPane.YES_NO_OPTION);
                 System.out.println(rp);
                 if(rp == 1){
                     return;

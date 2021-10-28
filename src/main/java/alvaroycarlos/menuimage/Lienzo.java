@@ -39,9 +39,9 @@ public class Lienzo extends JPanel{
         if(actImg == null) return;
         super.paintComponent(g);
         if(chosen == 1){
-            g.drawImage(umbralImg, 0, 0, null);
+            g.drawImage(umbralImg, (int)((950 - actImg.getWidth())/2), (int)((694 - actImg.getHeight())/2), null);
         }else{
-            g.drawImage(actImg, 0, 0, null);
+            g.drawImage(actImg, (int)((950 - actImg.getWidth())/2), (int)((694 - actImg.getHeight())/2), null);
         } 
     }
     
@@ -78,7 +78,7 @@ public class Lienzo extends JPanel{
     
     public boolean correctSize(File img){
         try{
-            if(ImageIO.read(img).getHeight() < 768 && ImageIO.read(img).getWidth() < 1024){
+            if(ImageIO.read(img).getHeight() < 694 && ImageIO.read(img).getWidth() < 950){
                 return true;
             }
         }catch(Exception ex){
