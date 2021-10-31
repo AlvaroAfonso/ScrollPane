@@ -5,16 +5,17 @@
  */
 package alvaroycarlos.menuimage;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-//import org.opencv.core.Mat;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.highgui.HighGui;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 /**
  *
@@ -24,24 +25,31 @@ public class Lienzo extends JPanel{
     
     //private Mat actImg = null;
     //private Mat prevImg = null;
-    
+    private Mat imgMat = null;
+    private Mat umbMat = null;
     private BufferedImage actImg = null;
     private BufferedImage umbralImg = null;
-    private Color pixels[][];
     private int chosen = 0;
+    private boolean redimension;
+    
+    private final int widhtRescaled = 950;
+    private final int heigthRescaled = 694;
     
     public Lienzo(){
-        this.setPreferredSize(new Dimension(950, 694));
+        this.setPreferredSize(new Dimension(widhtRescaled, heigthRescaled));
     }
     
    @Override
     public void paintComponent(Graphics g){
         if(actImg == null) return;
         super.paintComponent(g);
+        
+        //la formula introducida en los campos de posicion sirve para que en caso de que la imagen no ocupe
+        //todo el espacio, aparezca centrada
         if(chosen == 1){
-            g.drawImage(umbralImg, (int)((950 - actImg.getWidth())/2), (int)((694 - actImg.getHeight())/2), null);
+            g.drawImage(umbralImg, (int)((widhtRescaled - umbralImg.getWidth())/2), (int)((heigthRescaled - umbralImg.getHeight())/2), null);
         }else{
-            g.drawImage(actImg, (int)((950 - actImg.getWidth())/2), (int)((694 - actImg.getHeight())/2), null);
+            g.drawImage(actImg, (int)((widhtRescaled - actImg.getWidth())/2), (int)((heigthRescaled - actImg.getHeight())/2), null);
         } 
     }
     
@@ -58,27 +66,36 @@ public class Lienzo extends JPanel{
         return umbralImg;
     }
     
+    public Mat getUmbMat(){
+        return umbMat;
+    }
+    
     public int getChosen(){
         return chosen;
     }
     
-    public void loadImg(File img, int option){
-        try{
-            actImg = ImageIO.read(img);
-            if(option == 0){
-                actImg = this.resizeImg(actImg, 950, 694);
-            }
-            umbralImg = null;
-        }catch(Exception ex){
-            
+    public void loadImg(File file, boolean option){
+        imgMat = Imgcodecs.imread(file.getAbsolutePath());
+        actImg  = (BufferedImage) HighGui.toBufferedImage(imgMat);
+        
+        //indica si la imagen necesita
+        redimension = option;
+        if(redimension == true){
+            actImg = this.resizeImg(actImg, widhtRescaled, heigthRescaled);
         }
+        umbralImg = null;
+        
         chosen = 0;
         this.repaint();
     }
     
-    public boolean correctSize(File img){
+    public boolean correctSize(File file){
+        
+        Mat checkFile = Imgcodecs.imread(file.getAbsolutePath());
+        BufferedImage checkBufImg = (BufferedImage) HighGui.toBufferedImage(checkFile);
+        
         try{
-            if(ImageIO.read(img).getHeight() < 694 && ImageIO.read(img).getWidth() < 950){
+            if(checkBufImg.getHeight() < heigthRescaled && checkBufImg.getWidth() < widhtRescaled){
                 return true;
             }
         }catch(Exception ex){
@@ -88,45 +105,33 @@ public class Lienzo extends JPanel{
         return false;
     }
     
-    private BufferedImage resizeImg(BufferedImage original, int targetWidth, int targetHeight) throws IOException {
+    private BufferedImage resizeImg(BufferedImage original, int targetWidth, int targetHeight) {
+        
         Image resultingImage = original.getScaledInstance(targetWidth, targetHeight, Image.SCALE_DEFAULT);
+        
         BufferedImage outputImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB);
+        
         outputImage.getGraphics().drawImage(resultingImage, 0, 0, null);
+        
         return outputImage;
     }
     
     public void umbralizar(int umbral){
         
-        pixels = new Color[actImg.getHeight()][actImg.getWidth()];
+        umbMat = this.umbralizar(imgMat, umbral);
         
-        for (int i = 0; i < pixels.length; i++) {
-            for (int j = 0; j < pixels[0].length; j++) {
-                pixels[i][j]= new Color(actImg.getRGB(j, i));
-                //System.out.println(cont +":"+"RedGreenBlue:"+ bf.getRGB(j, i));
-            }
+        if(redimension == true){
+            //imagen reescalada
+            umbralImg = this.resizeImg((BufferedImage) HighGui.toBufferedImage(umbMat), widhtRescaled, heigthRescaled);
+            
+        }else{
+            umbralImg = (BufferedImage) HighGui.toBufferedImage(umbMat);
         }
-        
-        for (int i = 0; i < actImg.getHeight(); i++) {
-            for (int j = 0; j < actImg.getWidth(); j++) {
-                Color pix = pixels[i][j];
-                int promedio =(pix.getBlue()+pix.getRed()+pix.getGreen())/3;
-                if (promedio < umbral) 
-                    pixels[i][j]=Color.BLACK;
-                else
-                    pixels[i][j] = Color.WHITE;
-            }
-        }
-        umbralImg = new BufferedImage(actImg.getWidth(), actImg.getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < actImg.getHeight(); i++) {
-            for (int j = 0; j < actImg.getWidth(); j++) {
-                umbralImg.setRGB(j, i, pixels[i][j].getRGB());
-            }
-        } 
         chosen = 1;
         this.repaint();
     }
    
-    /*private Mat umbralizar(Mat imagen_original, Integer umbral) {
+    private Mat umbralizar(Mat imagen_original, Integer umbral) {
         // crear dos imágenes en niveles de gris con el mismo
         // tamaño que la original
         Mat imagenGris = new Mat(imagen_original.rows(),imagen_original.cols(),CvType.CV_8U);
@@ -143,6 +148,6 @@ public class Lienzo extends JPanel{
         
         // se devuelve la imagen umbralizada
         return imagenUmbralizada;
-    }*/
+    }
     
 }

@@ -11,8 +11,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.regex.*;
-import javax.imageio.ImageIO;
-//import org.opencv.core.Core;
+import org.opencv.core.Core;
+import org.opencv.imgcodecs.Imgcodecs;
+
 
 /**
  *
@@ -25,8 +26,8 @@ public class MenuImage extends javax.swing.JFrame {
 
     /** Creates new form MenuImage */
     public MenuImage() {
-        //nu.pattern.OpenCV.loadShared();
-        //System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        nu.pattern.OpenCV.loadShared();
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         initComponents();
         this.setResizable(false);
         this.setLocationRelativeTo(null);
@@ -65,7 +66,7 @@ public class MenuImage extends javax.swing.JFrame {
         lienzo1.setLayout(lienzo1Layout);
         lienzo1Layout.setHorizontalGroup(
             lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1020, Short.MAX_VALUE)
+            .addGap(0, 946, Short.MAX_VALUE)
         );
         lienzo1Layout.setVerticalGroup(
             lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -74,6 +75,7 @@ public class MenuImage extends javax.swing.JFrame {
 
         files.setText("Imágenes");
 
+        abrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         abrir.setText("Abrir");
         abrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -82,6 +84,7 @@ public class MenuImage extends javax.swing.JFrame {
         });
         files.add(abrir);
 
+        guardar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         guardar.setText("Guardar umbralizada");
         guardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -92,6 +95,7 @@ public class MenuImage extends javax.swing.JFrame {
 
         vista.setText("Vista");
 
+        vistaOriginal.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         vistaOriginal.setText("Imagen original");
         vistaOriginal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,6 +107,7 @@ public class MenuImage extends javax.swing.JFrame {
         files.add(vista);
         files.add(jSeparator1);
 
+        salir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         salir.setText("Salir");
         salir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,6 +120,7 @@ public class MenuImage extends javax.swing.JFrame {
 
         editar.setText("Editar");
 
+        umbralizar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         umbralizar.setText("Umbralizar");
         umbralizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -127,6 +133,7 @@ public class MenuImage extends javax.swing.JFrame {
 
         ayuda.setText("Ayuda");
 
+        informacion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
         informacion.setText("Información de uso");
         informacion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,17 +183,14 @@ public class MenuImage extends javax.swing.JFrame {
         if(res == JFileChooser.APPROVE_OPTION){
             File file = fc.getSelectedFile();
             String path = file.getAbsolutePath();
-            //System.out.println(file.getName());
-            //System.out.println(path);
             String regex = "(^[a-zA-Z0-9._ -]+)\\.(jpeg|jpg|png)$"; 
             Pattern r = Pattern.compile(regex);
             Matcher m = r.matcher(file.getName());
             try{
                 if(m.matches()){
-                    ImageIO.write(lienzo1.getUmbImg(), m.group(2), new File(path));
+                    Imgcodecs.imwrite(path, lienzo1.getUmbMat());
                 }else{
                     JOptionPane.showConfirmDialog(this, "Debe guardar con alguno de estos formatos: png, jpg o jpeg","Error",JOptionPane.CLOSED_OPTION);
-
                 }
             }catch(Exception ex){
                 System.out.println(ex.getMessage());
@@ -195,22 +199,22 @@ public class MenuImage extends javax.swing.JFrame {
     }//GEN-LAST:event_guardarActionPerformed
 
     private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
+        
         int res = fc.showOpenDialog(null);
-        int redimension = 1;
+        boolean redimension = false;
         if(res == JFileChooser.APPROVE_OPTION){
             File file = fc.getSelectedFile();
-            System.out.println(file.getAbsolutePath());
+            //System.out.println(file.getAbsolutePath());
             if(!lienzo1.correctSize(file)){
                 int rp = JOptionPane.showConfirmDialog(this, "Hemos definido que la imagen debe ser como máximo de 950x694, ¿desea redimensionar?", "Redimensionar imagen", JOptionPane.YES_NO_OPTION);
-                System.out.println(rp);
+                //System.out.println(rp);
                 if(rp == 1){
                     return;
                 }
-                redimension = 0;
+                redimension = true;
             }
             lienzo1.loadImg(file, redimension);
-        }
-        
+        }   
     }//GEN-LAST:event_abrirActionPerformed
 
     private void umbralizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_umbralizarActionPerformed
@@ -228,7 +232,7 @@ public class MenuImage extends javax.swing.JFrame {
             return;
         }
         
-        System.out.println("Umbralizando");
+        //System.out.println("Umbralizando");
         lienzo1.umbralizar(res);
     }//GEN-LAST:event_umbralizarActionPerformed
 
