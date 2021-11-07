@@ -1,0 +1,648 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package alvaroycarlos.scrollpane;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JScrollBar;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneConstants;
+import org.opencv.core.Core;
+import org.opencv.imgcodecs.Imgcodecs;
+
+
+/**
+ *
+ * @author alvaroafonsolopez
+ */
+public class ScrollPane extends javax.swing.JFrame {
+    
+    JFileChooser fc = new JFileChooser();
+    FileNameExtensionFilter filter = null;
+    
+    JScrollBar vertical;
+    JScrollBar horizontal;
+    
+    EstadisticasImagen estadisticas = null;
+    
+    int [] max;
+    int [] min;
+    int [] prom;
+    
+    Dimension vision;
+
+    /** Creates new form MenuImage */
+    public ScrollPane() {
+        nu.pattern.OpenCV.loadShared();
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        initComponents();
+        this.setResizable(true);
+        this.setLocationRelativeTo(null);
+        filter = new FileNameExtensionFilter("Imágenes","*.jpg","*.png","*.jpeg","jpg","png","jpeg");
+        fc.addChoosableFileFilter(filter);
+        
+        this.horizontal = scrollPane.getHorizontalScrollBar();
+        this.vertical = scrollPane.getVerticalScrollBar();
+        
+        horizontal.addAdjustmentListener(new ScrollListener());
+        vertical.addAdjustmentListener(new ScrollListener());
+    }
+    
+    class ScrollListener implements AdjustmentListener{
+
+        @Override
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            if(estadisticas == null) return;
+            
+            updateLabels();
+        }
+        
+    }
+    
+    private void calcularEstadisticas(){
+        Point pos = scrollPane.getViewport().getViewPosition();
+            
+            vision = scrollPane.getViewport().getExtentSize();
+            
+            //System.out.println("Img width: " + lienzo1.getImgWidth());
+            //System.out.println("Img height: " + lienzo1.getImgHeight());
+            
+            //System.out.println("Vision previa width: " + vision.width);
+            //System.out.println("Vision previa height: " + vision.height);
+            
+            if(lienzo1.getImgWidth() < vision.width){
+                vision.width = lienzo1.getImgWidth();
+            }
+            
+            if(lienzo1.getImgHeight() < vision.height){
+                vision.height = lienzo1.getImgHeight();
+            }
+            
+            //System.out.println("Vision posterior width: " + vision.width);
+            //System.out.println("Vision posterior height: " + vision.height);
+            try{
+                estadisticas.calculaEstadisticas(lienzo1.getImgMat(), pos, vision);
+            }catch(Exception e){
+                
+            }
+            
+    }
+    
+    private void updateLabels(){
+        this.calcularEstadisticas();
+        //estadisticas.calculaEstadisticas(lienzo1.getImgMat(), scrollPane.getViewport().getViewPosition(), scrollPane.getViewport().getExtentSize());
+        max = estadisticas.getMaximo();
+        min = estadisticas.getMinimo();
+        prom = estadisticas.getPromedio();
+        /*
+        AZUL = 0
+        VERDE = 1
+        ROJO = 2
+        */
+
+        maxRed.setText(String.valueOf(max[2]));
+        maxGreen.setText(String.valueOf(max[1]));
+        maxBlue.setText(String.valueOf(max[0]));
+
+        minRed.setText(String.valueOf(min[2]));
+        minGreen.setText(String.valueOf(min[1]));
+        minBlue.setText(String.valueOf(min[0]));
+
+        promRed.setText(String.valueOf(prom[2]));
+        promGreen.setText(String.valueOf(prom[1]));
+        promBlue.setText(String.valueOf(prom[0]));
+    }
+    
+    private void check(){
+        JViewport vPort = scrollPane.getViewport();
+            
+        int vDim = vPort.getExtentSize().height;
+        int hDim = vPort.getExtentSize().width;
+            
+        if(vDim > lienzo1.getHeight()){
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        }else{
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        }
+            
+        if(hDim > lienzo1.getWidth()){
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        }else{
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        }
+    }
+
+    /** This method is called from within the constructor to
+     * initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is
+     * always regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        scrollPane = new javax.swing.JScrollPane();
+        lienzo1 = new alvaroycarlos.scrollpane.Lienzo();
+        redPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        maxRed = new javax.swing.JTextField();
+        minRed = new javax.swing.JTextField();
+        promRed = new javax.swing.JTextField();
+        greenPanel = new javax.swing.JPanel();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        maxGreen = new javax.swing.JTextField();
+        minGreen = new javax.swing.JTextField();
+        promGreen = new javax.swing.JTextField();
+        bluePanel = new javax.swing.JPanel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        maxBlue = new javax.swing.JTextField();
+        minBlue = new javax.swing.JTextField();
+        promBlue = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        files = new javax.swing.JMenu();
+        abrir = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        salir = new javax.swing.JMenuItem();
+        ayuda = new javax.swing.JMenu();
+        informacion = new javax.swing.JMenuItem();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(539, 0));
+
+        lienzo1.setForeground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout lienzo1Layout = new javax.swing.GroupLayout(lienzo1);
+        lienzo1.setLayout(lienzo1Layout);
+        lienzo1Layout.setHorizontalGroup(
+            lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 950, Short.MAX_VALUE)
+        );
+        lienzo1Layout.setVerticalGroup(
+            lienzo1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 694, Short.MAX_VALUE)
+        );
+
+        scrollPane.setViewportView(lienzo1);
+
+        redPanel.setBackground(new java.awt.Color(255, 0, 0));
+        redPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Max");
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Min");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Prom");
+
+        maxRed.setEditable(false);
+        maxRed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxRedActionPerformed(evt);
+            }
+        });
+
+        minRed.setEditable(false);
+        minRed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minRedActionPerformed(evt);
+            }
+        });
+
+        promRed.setEditable(false);
+        promRed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                promRedActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout redPanelLayout = new javax.swing.GroupLayout(redPanel);
+        redPanel.setLayout(redPanelLayout);
+        redPanelLayout.setHorizontalGroup(
+            redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(redPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(maxRed)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(minRed)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(promRed)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        redPanelLayout.setVerticalGroup(
+            redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(redPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(redPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maxRed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(minRed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(promRed, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        greenPanel.setBackground(new java.awt.Color(0, 204, 0));
+        greenPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel19.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel19.setText("Max");
+
+        jLabel20.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel20.setText("Min");
+
+        jLabel21.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel21.setText("Prom");
+
+        maxGreen.setEditable(false);
+        maxGreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxGreenActionPerformed(evt);
+            }
+        });
+
+        minGreen.setEditable(false);
+        minGreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minGreenActionPerformed(evt);
+            }
+        });
+
+        promGreen.setEditable(false);
+        promGreen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                promGreenActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout greenPanelLayout = new javax.swing.GroupLayout(greenPanel);
+        greenPanel.setLayout(greenPanelLayout);
+        greenPanelLayout.setHorizontalGroup(
+            greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(greenPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(maxGreen)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(minGreen)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(promGreen)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        greenPanelLayout.setVerticalGroup(
+            greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(greenPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel21))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(greenPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maxGreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(minGreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(promGreen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        bluePanel.setBackground(new java.awt.Color(51, 51, 255));
+        bluePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel13.setText("Max");
+
+        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel14.setText("Min");
+
+        jLabel15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel15.setText("Prom");
+
+        maxBlue.setEditable(false);
+        maxBlue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maxBlueActionPerformed(evt);
+            }
+        });
+
+        minBlue.setEditable(false);
+        minBlue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minBlueActionPerformed(evt);
+            }
+        });
+
+        promBlue.setEditable(false);
+        promBlue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                promBlueActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout bluePanelLayout = new javax.swing.GroupLayout(bluePanel);
+        bluePanel.setLayout(bluePanelLayout);
+        bluePanelLayout.setHorizontalGroup(
+            bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bluePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(maxBlue)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(minBlue)
+                    .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(promBlue)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        bluePanelLayout.setVerticalGroup(
+            bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(bluePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(bluePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(maxBlue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(minBlue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(promBlue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        files.setText("Acciones");
+
+        abrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        abrir.setText("Abrir");
+        abrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abrirActionPerformed(evt);
+            }
+        });
+        files.add(abrir);
+        files.add(jSeparator1);
+
+        salir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        salir.setText("Salir");
+        salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salirActionPerformed(evt);
+            }
+        });
+        files.add(salir);
+
+        jMenuBar1.add(files);
+
+        ayuda.setText("Ayuda");
+
+        informacion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        informacion.setText("Información de uso");
+        informacion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                informacionActionPerformed(evt);
+            }
+        });
+        ayuda.add(informacion);
+
+        jMenuBar1.add(ayuda);
+
+        setJMenuBar(jMenuBar1);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(redPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(greenPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(bluePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(redPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(greenPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bluePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
+        
+        int res = fc.showOpenDialog(null);
+        if(res == JFileChooser.APPROVE_OPTION){
+            File file = fc.getSelectedFile();
+            //System.out.println(file.getAbsolutePath());
+            lienzo1.loadImg(file);
+            estadisticas = new EstadisticasImagen();
+            //System.out.println(scrollPane.getViewport().getViewPosition());
+            //System.out.println(scrollPane.getViewport().getExtentSize());
+            
+            scrollPane.getViewport().setViewPosition(new Point(0,0));
+            
+            this.calcularEstadisticas();
+            check();
+            updateLabels();
+        }   
+    }//GEN-LAST:event_abrirActionPerformed
+
+    private void salirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salirActionPerformed
+        int res = JOptionPane.showConfirmDialog(this, "¿Desea cerrar la ventena?", 
+                "Finalizar programa", JOptionPane.YES_NO_OPTION);
+        
+        if (res == JOptionPane.YES_OPTION){
+            this.dispose();
+        }
+    }//GEN-LAST:event_salirActionPerformed
+
+    private void informacionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_informacionActionPerformed
+        JOptionPane.showMessageDialog(this, 
+                "El uso de esta aplicación consiste en cargar una imagen selecionada y \nvisualizarla dentro de un panel,"+
+                " que de ser la imagen más grande que este, \nse podrán usar barras desplazadoras. En la parte"+
+                " superior pueden verse los \nvalores de los canales de color que puede verse en pantalla.", "Información", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_informacionActionPerformed
+
+    private void maxRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxRedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_maxRedActionPerformed
+
+    private void minRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minRedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_minRedActionPerformed
+
+    private void promRedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_promRedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_promRedActionPerformed
+
+    private void maxBlueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxBlueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_maxBlueActionPerformed
+
+    private void minBlueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minBlueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_minBlueActionPerformed
+
+    private void promBlueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_promBlueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_promBlueActionPerformed
+
+    private void maxGreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxGreenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_maxGreenActionPerformed
+
+    private void minGreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minGreenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_minGreenActionPerformed
+
+    private void promGreenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_promGreenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_promGreenActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(ScrollPane.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(ScrollPane.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(ScrollPane.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(ScrollPane.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ScrollPane().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem abrir;
+    private javax.swing.JMenu ayuda;
+    private javax.swing.JPanel bluePanel;
+    private javax.swing.JMenu files;
+    private javax.swing.JPanel greenPanel;
+    private javax.swing.JMenuItem informacion;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JTextField jTextField10;
+    private javax.swing.JTextField jTextField11;
+    private javax.swing.JTextField jTextField12;
+    private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jTextField9;
+    private alvaroycarlos.scrollpane.Lienzo lienzo1;
+    private javax.swing.JTextField maxBlue;
+    private javax.swing.JTextField maxGreen;
+    private javax.swing.JTextField maxRed;
+    private javax.swing.JTextField maxRed6;
+    private javax.swing.JTextField maxRed7;
+    private javax.swing.JTextField maxRed8;
+    private javax.swing.JTextField minBlue;
+    private javax.swing.JTextField minGreen;
+    private javax.swing.JTextField minRed;
+    private javax.swing.JTextField promBlue;
+    private javax.swing.JTextField promGreen;
+    private javax.swing.JTextField promRed;
+    private javax.swing.JPanel redPanel;
+    private javax.swing.JPanel redPanel2;
+    private javax.swing.JMenuItem salir;
+    private javax.swing.JScrollPane scrollPane;
+    // End of variables declaration//GEN-END:variables
+
+}
